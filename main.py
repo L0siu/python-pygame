@@ -40,20 +40,20 @@ class Player:
 
     def move(self, keys):
         new_rect = self.rect.copy()
-        if keys[pygame.K_a] and self.rect.x > 0:  # Left movement with border and screen collision
+        if keys[pygame.K_a] and self.rect.x > 0:  
             new_rect.x -= self.speed
-        if keys[pygame.K_d] and self.rect.x < width - self.rect.width:  # Right movement with border and screen collision
+        if keys[pygame.K_d] and self.rect.x < width - self.rect.width:  
             new_rect.x += self.speed
-        if keys[pygame.K_w] and self.rect.y > 0:  # Up movement with border and screen collision
+        if keys[pygame.K_w] and self.rect.y > 0:  
             new_rect.y -= self.speed
-        if keys[pygame.K_s] and self.rect.y < height - self.rect.height:  # Down movement with border and screen collision
+        if keys[pygame.K_s] and self.rect.y < height - self.rect.height:  
             new_rect.y += self.speed
 
-        # Check for collision with border
+        # kolizja z borderem
         if not new_rect.colliderect(BORDER):
             self.rect = new_rect
 
-        # Check for screen boundaries
+        # kolizja z ekranem
         self.rect.x = max(0, min(self.rect.x, width - self.rect.width))
         self.rect.y = max(0, min(self.rect.y, height - self.rect.height))
 
@@ -66,20 +66,20 @@ class Enemy:
 
     def move(self, keys):
         new_rect = self.rect.copy()
-        if keys[pygame.K_LEFT] and self.rect.x > 0:  # Left movement with border and screen collision
+        if keys[pygame.K_LEFT] and self.rect.x > 0:  
             new_rect.x -= self.speed
-        if keys[pygame.K_RIGHT] and self.rect.x < width - self.rect.width:  # Right movement with border and screen collision
+        if keys[pygame.K_RIGHT] and self.rect.x < width - self.rect.width:  
             new_rect.x += self.speed
-        if keys[pygame.K_UP] and self.rect.y > 0:  # Up movement with border and screen collision
+        if keys[pygame.K_UP] and self.rect.y > 0:  
             new_rect.y -= self.speed
-        if keys[pygame.K_DOWN] and self.rect.y < height - self.rect.height:  # Down movement with border and screen collision
+        if keys[pygame.K_DOWN] and self.rect.y < height - self.rect.height:  
             new_rect.y += self.speed
 
-        # Check for collision with border
+        # kolizja z borderem
         if not new_rect.colliderect(BORDER):
             self.rect = new_rect
 
-        # Check for screen boundaries
+        # kolizja z ekranem
         self.rect.x = max(0, min(self.rect.x, width - self.rect.width))
         self.rect.y = max(0, min(self.rect.y, height - self.rect.height))
 
@@ -118,8 +118,8 @@ class Button:
 button_start = Button(150, 150, 200, 75, (0, 0, 255), "Start Game")
 button_exit = Button(0, 0, 200, 50, (255, 0, 0), "Exit", action=lambda: set_game_running(False))
 
-player = Player(0, height / 2, 50, 50, 5, 30)  # Starting with 30 HP
-enemy = Enemy(width - 50, height / 2, 50, 50, 5, 30)  # Starting with 30 HP
+player = Player(0, height / 2, 50, 50, 5, 30)  #tutaj zmiana ilosci hp
+enemy = Enemy(width - 50, height / 2, 50, 50, 5, 30)   
 
 
 def set_game_running(value):
@@ -127,9 +127,6 @@ def set_game_running(value):
     game_running = value
 
 
-def set_running(value):
-    global running
-    running = value
 
 
 def draw_button(button):
@@ -152,9 +149,10 @@ def handle_bullets(player_bullets, enemy_bullets, player, enemy):
         elif enemy.rect.colliderect(bullet.rect):
             pygame.event.post(pygame.event.Event(enemy_hit))
             player_bullets.remove(bullet)
-            enemy.hp -= 1  # Reduce enemy HP on collision
+            enemy.hp -= 1  # odjecie hp przy kolizji
             if enemy.hp <= 0:
                 show_winner("BLUE")
+                reset_game()  # Dodaj to wywołanie przy wygranej
     for bullet in enemy_bullets:
         bullet.move()
         bullet.draw(screen)
@@ -163,17 +161,17 @@ def handle_bullets(player_bullets, enemy_bullets, player, enemy):
         elif player.rect.colliderect(bullet.rect):
             pygame.event.post(pygame.event.Event(player_hit))
             enemy_bullets.remove(bullet)
-            player.hp -= 1  # Reduce player HP on collision
+            player.hp -= 1  # odjecie hp przy kolizji
             if player.hp <= 0:
                 show_winner("RED")
+                reset_game()  # Dodaj to wywołanie przy wygranej
 
 
 def show_winner(color):
     winner_text = font.render(f'{color} WINS!', True, (0, 0, 0))
     screen.blit(winner_text, (width // 2 - winner_text.get_width() // 2, height // 2 - winner_text.get_height() // 2))
     pygame.display.update()
-    pygame.time.delay(2000)  # Delay for 2 seconds to display the winner message
-    reset_game()
+    pygame.time.delay(2000)  # opóznienie 2 sekundowe zanim tekst sie wyswietli
 
 
 def reset_game():
